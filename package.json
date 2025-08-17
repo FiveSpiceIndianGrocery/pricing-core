@@ -26,12 +26,16 @@
     "docs": "echo 'Documentation is in README.md'",
     "prepack": "npm run test",
     "postpack": "echo 'Package created successfully'",
-    "publish:patch": "./scripts/publish.sh patch",
-    "publish:minor": "./scripts/publish.sh minor",
-    "publish:major": "./scripts/publish.sh major",
     "dev": "npm run test && npm run examples",
     "start": "npm run cli",
-    "demo": "npm run examples"
+    "demo": "npm run examples",
+    "version:patch": "./scripts/version.sh patch --auto-commit",
+    "version:minor": "./scripts/version.sh minor --auto-commit",
+    "version:major": "./scripts/version.sh major --auto-commit",
+    "version:dry-run": "./scripts/version.sh patch --dry-run",
+    "release:patch": "npm run version:patch",
+    "release:minor": "npm run version:minor",
+    "release:major": "npm run version:major"
   },
   "keywords": [
     "pricing",

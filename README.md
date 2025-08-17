@@ -387,6 +387,20 @@ npm run examples     # Run pricing examples
 npm run cli          # Interactive testing environment
 ```
 
+### **🚀 Automated Versioning & Releases**
+```bash
+# Quick releases (automated)
+npm run release:patch    # 1.0.0 → 1.0.1 (bug fixes)
+npm run release:minor    # 1.0.0 → 1.1.0 (new features)
+npm run release:major    # 1.0.0 → 2.0.0 (breaking changes)
+
+# Manual version control
+npm run version:patch    # Update version only
+npm run version:minor    # Update version only
+npm run version:major    # Update version only
+npm run version:dry-run  # Preview version changes
+```
+
 ### **Development Workflow**
 ```bash
 # Install dependencies

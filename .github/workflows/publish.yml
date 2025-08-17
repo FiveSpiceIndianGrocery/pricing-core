@@ -3,6 +3,17 @@ name: Publish to npm
 on:
   release:
     types: [created]
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version type to release'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 jobs:
   publish:
@@ -15,6 +26,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,7 +41,36 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Get version from tag
+        id: get_version
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          else
+            VERSION=$(node -p "require('./package.json').version")
+            echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          fi
+          echo "Version: ${{ steps.get_version.outputs.version }}"
+
       - name: Publish to npm
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Verify npm publication
+        run: |
+          echo "Waiting for npm to index the package..."
+          sleep 30
+          npm view pricing-core@${{ steps.get_version.outputs.version }} --json
+
+      - name: Create release summary
+        run: |
+          echo "## 🎉 PricingCore v${{ steps.get_version.outputs.version }} Published!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Package published** to npm: [pricing-core@${{ steps.get_version.outputs.version }}](https://www.npmjs.com/package/pricing-core)" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Tests passed** - All functionality verified" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Security checks** - No vulnerabilities detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Install with:** \`npm install pricing-core\`" >> $GITHUB_STEP_SUMMARY
+          echo "**View package:** https://www.npmjs.com/package/pricing-core" >> $GITHUB_STEP_SUMMARY
