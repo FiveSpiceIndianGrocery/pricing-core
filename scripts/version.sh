@@ -159,11 +159,18 @@ if [ "$AUTO_COMMIT" = true ]; then
     
     echo -e "${GREEN}✅ Version ${NEW_VERSION} committed successfully${NC}"
     
-    # Create git tag
-    echo -e "${BLUE}🏷️ Creating git tag ${NEW_VERSION}...${NC}"
-    git tag -a "${NEW_VERSION}" -m "Release version ${NEW_VERSION}"
+    # Create git tag (remove v prefix if it exists)
+    TAG_NAME="${NEW_VERSION}"
+    if [[ "${TAG_NAME}" == v* ]]; then
+        TAG_NAME="${TAG_NAME}"
+    else
+        TAG_NAME="v${TAG_NAME}"
+    fi
     
-    echo -e "${GREEN}✅ Git tag v${NEW_VERSION} created${NC}"
+    echo -e "${BLUE}🏷️ Creating git tag ${TAG_NAME}...${NC}"
+    git tag -a "${TAG_NAME}" -m "Release version ${NEW_VERSION}"
+    
+    echo -e "${GREEN}✅ Git tag ${TAG_NAME} created${NC}"
     
     # Push changes and tags
     echo -e "${BLUE}📤 Pushing changes and tags...${NC}"
