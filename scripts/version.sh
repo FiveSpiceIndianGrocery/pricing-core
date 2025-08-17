@@ -159,11 +159,13 @@ if [ "$AUTO_COMMIT" = true ]; then
     
     echo -e "${GREEN}✅ Version ${NEW_VERSION} committed successfully${NC}"
     
-    # Create git tag (remove v prefix if it exists)
+    # Create git tag (ensure proper v prefix)
     TAG_NAME="${NEW_VERSION}"
     if [[ "${TAG_NAME}" == v* ]]; then
+        # Already has v prefix, use as-is
         TAG_NAME="${TAG_NAME}"
     else
+        # Add v prefix
         TAG_NAME="v${TAG_NAME}"
     fi
     
@@ -172,10 +174,23 @@ if [ "$AUTO_COMMIT" = true ]; then
     
     echo -e "${GREEN}✅ Git tag ${TAG_NAME} created${NC}"
     
+    # Show current tags
+    echo -e "${BLUE}📋 Current local tags:${NC}"
+    git tag -l | tail -5
+    
     # Push changes and tags
     echo -e "${BLUE}📤 Pushing changes and tags...${NC}"
     git push origin main
-    git push origin "v${NEW_VERSION}"
+    git push origin "${TAG_NAME}"
+    
+    # Verify tag was pushed
+    echo -e "${BLUE}🔍 Verifying tag push...${NC}"
+    if git ls-remote --tags origin | grep -q "${TAG_NAME}"; then
+        echo -e "${GREEN}✅ Tag ${TAG_NAME} successfully pushed to GitHub${NC}"
+    else
+        echo -e "${RED}❌ Error: Tag ${TAG_NAME} was not pushed successfully${NC}"
+        exit 1
+    fi
     
     echo -e "${GREEN}✅ Changes and tags pushed to GitHub${NC}"
     
