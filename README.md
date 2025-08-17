@@ -517,8 +517,8 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/pricing-engine/issues)
-- **Documentation**: [GitHub Wiki](https://github.com/yourusername/pricing-engine/wiki)
+- **Issues**: [GitHub Issues](https://github.com/FiveSpiceIndianGrocery/pricing-core/issues)
+- **Documentation**: [GitHub Wiki](https://github.com/FiveSpiceIndianGrocery/pricing-core/wiki)
 - **Examples**: Run `npm run examples` for comprehensive examples
 
 ## 🔗 Related Packages
