@@ -1,0 +1,57 @@
+{
+  "name": "@pricing-engine/core",
+  "version": "1.0.0",
+  "description": "A high-precision, currency-agnostic pricing engine with BigInt precision, multiple rounding strategies, and ISO 4217 currency support via currency-codes package",
+  "main": "src/index.js",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./rounding": "./src/rounding/index.js",
+    "./math": "./src/core/math.js",
+    "./currency": "./src/currency.js"
+  },
+  "files": [
+    "src/**/*.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/quick-check.js",
+    "examples": "node examples.js",
+    "cli": "node cli.js",
+    "build": "echo 'No build step needed for ES modules'",
+    "prepublishOnly": "npm test",
+    "lint": "echo 'Add your preferred linter here'",
+    "docs": "echo 'Documentation is in README.md'"
+  },
+  "keywords": [
+    "pricing",
+    "calculator",
+    "rounding",
+    "business-logic",
+    "bigint",
+    "precision",
+    "currency",
+    "financial",
+    "ecommerce",
+    "retail",
+    "iso4217"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/pricing-engine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/pricing-engine/issues"
+  },
+  "homepage": "https://github.com/yourusername/pricing-engine#readme",
+  "devDependencies": {},
+  "dependencies": {
+    "currency-codes": "^2.2.0"
+  }
+}
