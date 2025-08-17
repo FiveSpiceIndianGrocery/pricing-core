@@ -1,6 +1,6 @@
 {
   "name": "pricing-core",
-  "version": "1.0.4",
+  "version": "v1.0.5",
   "description": "PricingCore - A high-precision, currency-agnostic pricing engine with BigInt precision, multiple rounding strategies, and ISO 4217 currency support via currency-codes package",
   "main": "src/index.js",
   "type": "module",
