@@ -1,10 +1,39 @@
-# @pricing-engine/core
+# PricingCore
 
-[![npm version](https://badge.fury.io/js/%40pricing-engine%2Fcore.svg)](https://badge.fury.io/js/%40pricing-engine%2Fcore)
+[![npm version](https://badge.fury.io/js/pricing-core.svg)](https://badge.fury.io/js/pricing-core)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+[![ES Modules](https://img.shields.io/badge/ES%20Modules-✓-green.svg)](https://nodejs.org/api/esm.html)
+
+
 
 A high-precision, **currency-agnostic** pricing engine built in Node.js using BigInt for financial calculations. Perfect for e-commerce, retail, and financial applications that need accurate pricing across multiple currencies.
+
+## 🚀 **Quick Start for Developers**
+
+```bash
+# Install
+npm install pricing-core
+
+# Import and use
+import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-core';
+
+# Calculate price with 30% margin
+const cost = toSmallestUnit(2.50, 'USD');  // $2.50 → 250 cents
+const margin = pctToBps(30);                // 30% → 3000 bps
+const price = calculatePrice(cost, margin, 'ceilStepUSD'); // Round to nickels
+
+console.log(formatPrice(price, 'USD', true)); // "$3.60"
+```
+
+## 🎯 **Why PricingCore?**
+
+- **🔢 BigInt Precision** - No floating-point errors in financial calculations
+- **🌍 180+ Currencies** - Full ISO 4217 support with automatic updates
+- **⚡ High Performance** - Integer-only arithmetic for maximum speed
+- **🔧 Developer Friendly** - Clean API, comprehensive examples, TypeScript ready
+- **📱 CLI Testing** - Interactive testing environment included
 
 ## ✨ Key Features
 
@@ -21,17 +50,16 @@ A high-precision, **currency-agnostic** pricing engine built in Node.js using Bi
 ### Installation
 
 ```bash
-npm install @pricing-engine/core
-```
+npm install pricing-core
 
 ### Basic Usage
 
 ```javascript
-import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from '@pricing-engine/core';
+import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-core';
 
 // Calculate price for a $2.50 item with 30% margin
 const cost = toSmallestUnit(2.50, 'USD');  // Convert to cents
-const margin = pctToBps(30);                // 30% → 3000 basis points
+const margin = pctToBps(30);                // 30% → 3000 bps
 const price = calculatePrice(cost, margin, 'ceilStepUSD'); // Round to nickels
 
 console.log(formatPrice(price, 'USD', true)); // "$3.60"
@@ -309,7 +337,7 @@ const price = calculatePrice(cost, margin, roundToQuarter);
 ### Example 1: Basic USD Pricing
 
 ```javascript
-import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from '@pricing-engine/core';
+import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-core';
 
 const cost = toSmallestUnit(2.50, 'USD');  // $2.50 → 250 cents
 const margin = pctToBps(30);                // 30% → 3000 bps
@@ -347,24 +375,64 @@ const btcPrice = calculatePrice(btcCost, btcMargin, 'identity');
 console.log(formatPrice(btcPrice, btc, true)); // "₿0.00115000"
 ```
 
-## 🧪 Testing & Development
+## 🧪 **Developer Experience**
 
-### Run Examples
-
+### **Quick Commands**
 ```bash
-npm run examples
+npm run dev          # Run tests + examples
+npm start            # Launch interactive CLI
+npm run demo         # Run comprehensive examples
+npm test             # Run test suite
+npm run examples     # Run pricing examples
+npm run cli          # Interactive testing environment
 ```
 
-### Run Tests
-
+### **Development Workflow**
 ```bash
+# Install dependencies
+npm install
+
+# Run development mode (tests + examples)
+npm run dev
+
+# Test your changes
 npm test
+
+# Try interactive CLI
+npm start
+
+# Publish new version
+npm run publish:patch  # 1.0.0 → 1.0.1
+npm run publish:minor  # 1.0.0 → 1.1.0
+npm run publish:major  # 1.0.0 → 2.0.0
 ```
 
-### Interactive CLI
+### **TypeScript Support**
+This package is built with ES modules and is fully TypeScript compatible. All functions include JSDoc comments for excellent IDE support.
+
+## 📦 Publishing
+
+This package is published to the public npm registry (npmjs.com). To publish a new version:
+
+1. **Update version** in `package.json`
+2. **Create a GitHub release** with the new version tag
+3. **GitHub Actions** will automatically publish to `pricing-core` on npm
+
+### Manual Publishing
 
 ```bash
-npm run cli
+# Login to npm
+npm login
+
+# Publish the package
+npm publish
+```
+
+### Installing from npm
+
+```bash
+# Install the package directly from npm
+npm install pricing-core
 ```
 
 ## 🔧 Advanced Usage
@@ -372,7 +440,7 @@ npm run cli
 ### Custom Currency Configuration
 
 ```javascript
-import { createCurrency } from '@pricing-engine/core';
+import { createCurrency } from 'pricing-core';
 
 // Create a custom currency for a local market
 const localCurrency = createCurrency('LOCAL', 'L', 3);  // 3 decimal places
@@ -418,7 +486,7 @@ try {
 ## 📦 Package Structure
 
 ```
-@pricing-engine/core/
+pricing-core/
 ├── src/
 │   ├── index.js          # Main exports
 │   ├── core/

@@ -1,5 +1,5 @@
 {
-  "name": "@pricing-engine/core",
+  "name": "pricing-core",
   "version": "1.0.0",
   "description": "A high-precision, currency-agnostic pricing engine with BigInt precision, multiple rounding strategies, and ISO 4217 currency support via currency-codes package",
   "main": "src/index.js",
@@ -17,12 +17,21 @@
   ],
   "scripts": {
     "test": "node test/quick-check.js",
+    "test:watch": "node test/quick-check.js --watch",
     "examples": "node examples.js",
     "cli": "node cli.js",
     "build": "echo 'No build step needed for ES modules'",
     "prepublishOnly": "npm test",
     "lint": "echo 'Add your preferred linter here'",
-    "docs": "echo 'Documentation is in README.md'"
+    "docs": "echo 'Documentation is in README.md'",
+    "prepack": "npm run test",
+    "postpack": "echo 'Package created successfully'",
+    "publish:patch": "./scripts/publish.sh patch",
+    "publish:minor": "./scripts/publish.sh minor",
+    "publish:major": "./scripts/publish.sh major",
+    "dev": "npm run test && npm run examples",
+    "start": "npm run cli",
+    "demo": "npm run examples"
   },
   "keywords": [
     "pricing",
@@ -35,22 +44,28 @@
     "financial",
     "ecommerce",
     "retail",
-    "iso4217"
+    "iso4217",
+    "margin",
+    "profit",
+    "core",
+    "engine",
+    "typescript",
+    "node",
+    "javascript"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": "Kunal Advani <kunal.advani@example.com>",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/pricing-engine.git"
+    "url": "https://github.com/FiveSpiceIndianGrocery/pricing_engine.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/pricing-engine/issues"
+    "url": "https://github.com/FiveSpiceIndianGrocery/pricing_engine/issues"
   },
-  "homepage": "https://github.com/yourusername/pricing-engine#readme",
-  "devDependencies": {},
+  "homepage": "https://github.com/FiveSpiceIndianGrocery/pricing_engine#readme",
   "dependencies": {
     "currency-codes": "^2.2.0"
   }
