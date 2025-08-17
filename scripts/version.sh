@@ -156,15 +156,21 @@ if [ -f "README.md" ]; then
         VERSION_DISPLAY="${VERSION_DISPLAY#v}"
     fi
     
-    # Update npm version in README
+    # Update or add version information to README installation sections
+    # First, try to update existing version references
     sed -i.bak "s/\(npm install pricing-core@\)[0-9]\+\.[0-9]\+\.[0-9]\+/\1${VERSION_DISPLAY}/g" README.md
     sed -i.bak "s/\(pricing-core@\)[0-9]\+\.[0-9]\+\.[0-9]\+/\1${VERSION_DISPLAY}/g" README.md
     
-    # Update any other version references
-    sed -i.bak "s/\(Version: \)[0-9]\+\.[0-9]\+\.[0-9]\+/\1${VERSION_DISPLAY}/g" README.md
+    # If no version numbers found, add version information to installation sections
+    if ! grep -q "npm install pricing-core@" README.md; then
+        # Add version information to the first installation section
+        sed -i.bak "s/\(npm install pricing-core\)/\1\n# Install specific version\nnpm install pricing-core@${VERSION_DISPLAY}/" README.md
+        echo -e "${GREEN}✅ README.md updated with version ${VERSION_DISPLAY} (added version info)${NC}"
+    else
+        echo -e "${GREEN}✅ README.md updated with version ${VERSION_DISPLAY} (updated existing)${NC}"
+    fi
     
     rm README.md.bak
-    echo -e "${GREEN}✅ README.md updated with version ${VERSION_DISPLAY}${NC}"
 else
     echo -e "${YELLOW}⚠️ README.md not found, skipping version update${NC}"
 fi
