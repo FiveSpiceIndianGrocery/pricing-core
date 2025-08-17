@@ -1,12 +1,8 @@
 # PricingCore
 
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 [![ES Modules](https://img.shields.io/badge/ES%20Modules-✓-green.svg)](https://nodejs.org/api/esm.html)
-
-
 
 A high-precision, **currency-agnostic** pricing engine built in Node.js using BigInt for financial calculations. Perfect for e-commerce, retail, and financial applications that need accurate pricing across multiple currencies.
 
@@ -16,7 +12,7 @@ A high-precision, **currency-agnostic** pricing engine built in Node.js using Bi
 # Install
 npm install pricing-core
 # Install specific version
-npm install pricing-core@1.0.11
+npm install pricing-core@v1.0.12
 
 # Import and use
 import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-core';
@@ -32,9 +28,9 @@ console.log(formatPrice(price, 'USD', true)); // "$3.60"
 ## 🎯 **Why PricingCore?**
 
 - **🔢 BigInt Precision** - No floating-point errors in financial calculations
-- **🌍 180+ Currencies** - Full ISO 4217 support with automatic updates
+- **🌍 180+ Currencies** - Full ISO 4217 support via currency-codes package
 - **⚡ High Performance** - Integer-only arithmetic for maximum speed
-- **🔧 Developer Friendly** - Clean API, comprehensive examples, TypeScript ready
+- **🔧 Developer Friendly** - Clean API, comprehensive examples, ES modules
 - **📱 CLI Testing** - Interactive testing environment included
 
 ## ✨ Key Features
@@ -54,7 +50,8 @@ console.log(formatPrice(price, 'USD', true)); // "$3.60"
 ```bash
 npm install pricing-core
 # Install specific version
-npm install pricing-core@1.0.11
+npm install pricing-core@v1.0.12
+```
 
 ### Basic Usage
 
@@ -425,8 +422,8 @@ npm run publish:minor  # 1.0.0 → 1.1.0
 npm run publish:major  # 1.0.0 → 2.0.0
 ```
 
-### **TypeScript Support**
-This package is built with ES modules and is fully TypeScript compatible. All functions include JSDoc comments for excellent IDE support.
+### **ES Modules Support**
+This package is built with ES modules and is fully compatible with modern Node.js. All functions include JSDoc comments for excellent IDE support.
 
 ## 📦 Publishing
 
@@ -452,7 +449,7 @@ npm publish
 # Install the package directly from npm
 npm install pricing-core
 # Install specific version
-npm install pricing-core@1.0.11
+npm install pricing-core@v1.0.12
 ```
 
 ## 🔧 Advanced Usage
@@ -546,14 +543,12 @@ See [SECURITY.md](SECURITY.md) for more details.
 ## 🆘 Support
 
 - **Issues**: [GitHub Issues](https://github.com/FiveSpiceIndianGrocery/pricing-core/issues)
-- **Documentation**: [GitHub Wiki](https://github.com/FiveSpiceIndianGrocery/pricing-core/wiki)
 - **Examples**: Run `npm run examples` for comprehensive examples
+- **CLI**: Run `npm start` for interactive testing
 
 ## 🔗 Related Packages
 
-- `@pricing-engine/rounding` - Additional rounding strategies
-- `@pricing-engine/currencies` - Extended currency support
-- `@pricing-engine/tax` - Tax calculation utilities
+- `currency-codes` - ISO 4217 currency data and utilities
 
 ---
 

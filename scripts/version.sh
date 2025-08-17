@@ -69,15 +69,53 @@ fi
 
 # Check for uncommitted changes
 if [ -n "$(git status --porcelain)" ]; then
-    echo -e "${YELLOW}Warning: You have uncommitted changes${NC}"
+    echo -e "${YELLOW}⚠️  You have uncommitted changes${NC}"
+    echo ""
+    echo -e "${BLUE}📋 Current changes:${NC}"
     git status --short
     echo ""
-    read -p "Continue with version update? (y/N): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Version update cancelled. Please commit your changes first."
-        exit 0
+    
+    # Show diff summary
+    echo -e "${BLUE}📊 Change summary:${NC}"
+    echo "Modified files:"
+    git diff --name-only --cached 2>/dev/null | while read file; do
+        if [ -n "$file" ]; then
+            echo "  📝 $file (staged)"
+        fi
+    done
+    
+    git diff --name-only 2>/dev/null | while read file; do
+        if [ -n "$file" ]; then
+            echo "  📝 $file (unstaged)"
+        fi
+    done
+    
+    echo ""
+    echo -e "${BLUE}🔍 Detailed changes:${NC}"
+    echo "Staged changes:"
+    git diff --cached --stat 2>/dev/null || echo "  No staged changes"
+    echo ""
+    echo "Unstaged changes:"
+    git diff --stat 2>/dev/null || echo "  No unstaged changes"
+    echo ""
+    
+    # Ask for commit message
+    echo -e "${YELLOW}💬 Please provide a commit message for these changes:${NC}"
+    echo "  (This will be used to commit changes before version bump)"
+    echo ""
+    read -p "Commit message: " COMMIT_MESSAGE
+    
+    if [ -z "$COMMIT_MESSAGE" ]; then
+        echo -e "${RED}❌ Commit message cannot be empty. Version update cancelled.${NC}"
+        exit 1
     fi
+    
+    echo ""
+    echo -e "${BLUE}💾 Committing changes with message: "${COMMIT_MESSAGE}"${NC}"
+    git add .
+    git commit -m "$COMMIT_MESSAGE"
+    echo -e "${GREEN}✅ Changes committed successfully${NC}"
+    echo ""
 fi
 
 # Run tests first

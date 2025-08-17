@@ -10,7 +10,7 @@
 
 **Please do NOT report security vulnerabilities through public GitHub issues.**
 
-If you discover a security vulnerability within PricingCore, please send an email to [security@fivespiceindiangrocery.com](mailto:security@fivespiceindiangrocery.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within PricingCore, please send an email to [security@fivespiceindiangrocery.com](mailto:kunal@fivespiceindiangrocery.com). All security vulnerabilities will be promptly addressed.
 
 ### What to Include
 
