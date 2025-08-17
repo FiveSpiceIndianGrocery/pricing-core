@@ -15,6 +15,8 @@ A high-precision, **currency-agnostic** pricing engine built in Node.js using Bi
 ```bash
 # Install
 npm install pricing-core
+# Install specific version
+npm install pricing-core@1.0.11
 
 # Import and use
 import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-core';
@@ -51,6 +53,8 @@ console.log(formatPrice(price, 'USD', true)); // "$3.60"
 
 ```bash
 npm install pricing-core
+# Install specific version
+npm install pricing-core@1.0.11
 
 ### Basic Usage
 
@@ -447,6 +451,8 @@ npm publish
 ```bash
 # Install the package directly from npm
 npm install pricing-core
+# Install specific version
+npm install pricing-core@1.0.11
 ```
 
 ## 🔧 Advanced Usage
