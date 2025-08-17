@@ -147,14 +147,37 @@ fi
 echo -e "${BLUE}📦 Updating package.json...${NC}"
 npm pkg set version="$NEW_VERSION"
 
+# Update README.md with new version
+echo -e "${BLUE}📝 Updating README.md version...${NC}"
+if [ -f "README.md" ]; then
+    # Extract version number without v prefix for display
+    VERSION_DISPLAY="${NEW_VERSION}"
+    if [[ "${VERSION_DISPLAY}" == v* ]]; then
+        VERSION_DISPLAY="${VERSION_DISPLAY#v}"
+    fi
+    
+    # Update npm version in README
+    sed -i.bak "s/\(npm install pricing-core@\)[0-9]\+\.[0-9]\+\.[0-9]\+/\1${VERSION_DISPLAY}/g" README.md
+    sed -i.bak "s/\(pricing-core@\)[0-9]\+\.[0-9]\+\.[0-9]\+/\1${VERSION_DISPLAY}/g" README.md
+    
+    # Update any other version references
+    sed -i.bak "s/\(Version: \)[0-9]\+\.[0-9]\+\.[0-9]\+/\1${VERSION_DISPLAY}/g" README.md
+    
+    rm README.md.bak
+    echo -e "${GREEN}✅ README.md updated with version ${VERSION_DISPLAY}${NC}"
+else
+    echo -e "${YELLOW}⚠️ README.md not found, skipping version update${NC}"
+fi
+
 # Commit changes
 if [ "$AUTO_COMMIT" = true ]; then
     echo -e "${BLUE}💾 Auto-committing version changes...${NC}"
-    git add package.json CHANGELOG.md
+    git add package.json CHANGELOG.md README.md
     git commit -m "chore: bump version to ${NEW_VERSION}
 
 - Automated version bump
 - Updated CHANGELOG.md
+- Updated README.md with new version
 - Ready for release"
     
     echo -e "${GREEN}✅ Version ${NEW_VERSION} committed successfully${NC}"
