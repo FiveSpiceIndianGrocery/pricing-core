@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.7] - 2025-08-17
+
+### Added
+- Automated version management
+- Enhanced security policies
+- GitHub Actions privacy controls
+
+### Changed
+- Repository renamed to pricing-core
+- Package branding updated to PricingCore
+
+### Fixed
+- Security vulnerability reporting process
+- GitHub Actions permissions
+
+
+
 ## [v1.0.5] - 2025-08-17
 
 ### Added
