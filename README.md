@@ -515,6 +515,14 @@ pricing-core/
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
+## 🔒 Security
+
+**Please do NOT report security vulnerabilities through public GitHub issues.**
+
+If you discover a security vulnerability, please email [security@fivespiceindiangrocery.com](mailto:security@fivespiceindiangrocery.com).
+
+See [SECURITY.md](SECURITY.md) for more details.
+
 ## 🆘 Support
 
 - **Issues**: [GitHub Issues](https://github.com/FiveSpiceIndianGrocery/pricing-core/issues)
