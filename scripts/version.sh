@@ -265,7 +265,7 @@ if [ "$AUTO_COMMIT" = true ]; then
     echo -e "${GREEN}🎉 Version ${NEW_VERSION} is ready for release!${NC}"
     echo ""
     echo "Next steps:"
-    echo "1. Create a GitHub release for v${NEW_VERSION}"
+    echo "1. Create a GitHub release for ${NEW_VERSION}"
     echo "2. GitHub Actions will automatically publish to npm"
     echo "3. Verify package is available at: https://www.npmjs.com/package/pricing-core"
 else
