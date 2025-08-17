@@ -34,12 +34,25 @@ jobs:
         with:
           node-version: '18'
           registry-url: 'https://registry.npmjs.org'
+          scope: '@fivespicegrocery'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Run tests
         run: npm test
+
+      - name: Pre-publish checks
+        run: |
+          echo "=== Pre-publish Checks ==="
+          echo "Package name: $(node -p "require('./package.json').name")"
+          echo "Package version: $(node -p "require('./package.json').version")"
+          echo "NPM_TOKEN available: ${{ secrets.NPM_TOKEN != '' && 'Yes' || 'No' }}"
+          echo "Registry URL: https://registry.npmjs.org"
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          echo "=========================="
 
       - name: Get version from tag
         id: get_version
@@ -52,9 +65,25 @@ jobs:
             echo "version=${VERSION}" >> $GITHUB_OUTPUT
           fi
           echo "Version: ${{ steps.get_version.outputs.version }}"
+          echo "Event type: ${{ github.event_name }}"
+          echo "GitHub ref: ${{ github.ref }}"
 
       - name: Publish to npm
-        run: npm publish
+        run: |
+          echo "=== Publishing to npm ==="
+          echo "Package: $(node -p "require('./package.json').name")"
+          echo "Version: $(node -p "require('./package.json').version")"
+          echo "Registry: $(npm config get registry)"
+          echo "Token available: ${{ secrets.NPM_TOKEN != '' && 'Yes' || 'No' }}"
+          
+          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
+            echo "❌ Error: NPM_TOKEN is not available"
+            exit 1
+          fi
+          
+          echo "🚀 Publishing package..."
+          npm publish
+          echo "✅ Package published successfully"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -62,7 +91,11 @@ jobs:
         run: |
           echo "Waiting for npm to index the package..."
           sleep 30
-          npm view pricing-core@${{ steps.get_version.outputs.version }} --json
+          echo "Checking package: pricing-core@${{ steps.get_version.outputs.version }}"
+          npm view pricing-core@${{ steps.get_version.outputs.version }} --json || echo "Package not yet indexed"
+          
+          echo "Checking latest version:"
+          npm view pricing-core version || echo "Could not get latest version"
 
       - name: Create release summary
         run: |
