@@ -6,7 +6,7 @@
 
 A high-precision, **currency-agnostic** pricing engine built in Node.js using BigInt for financial calculations. Perfect for e-commerce, retail, and financial applications that need accurate pricing across multiple currencies.
 
-## ✨ Features
+## ✨ Key Features
 
 - **🔢 BigInt Precision**: All calculations use BigInt to avoid floating-point errors
 - **🌍 Currency Agnostic**: Support for any currency with configurable decimal places
@@ -37,9 +37,9 @@ const price = calculatePrice(cost, margin, 'ceilStepUSD'); // Round to nickels
 console.log(formatPrice(price, 'USD', true)); // "$3.60"
 ```
 
-## 📚 API Reference
+## 📚 Core API
 
-### Core Functions
+### Main Functions
 
 #### `calculatePrice(costUnits, marginBps, rounding)`
 
@@ -132,6 +132,8 @@ Create a custom currency configuration.
 const btc = createCurrency('BTC', '₿', 8);  // Bitcoin with 8 decimals
 const satoshis = toSmallestUnit(0.001, btc); // 100000n
 ```
+
+### Currency Information Functions
 
 #### `getSupportedCurrencies()`
 
@@ -345,7 +347,7 @@ const btcPrice = calculatePrice(btcCost, btcMargin, 'identity');
 console.log(formatPrice(btcPrice, btc, true)); // "₿0.00115000"
 ```
 
-## 🧪 Testing
+## 🧪 Testing & Development
 
 ### Run Examples
 
