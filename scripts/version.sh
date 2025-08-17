@@ -85,7 +85,7 @@ echo -e "${BLUE}🧪 Running tests...${NC}"
 npm test
 
 # Get current version
-CURRENT_VERSION=$(npm run --silent version --dry-run | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+' | head -1)
+CURRENT_VERSION=$(node -p "require('./package.json').version")
 echo -e "${BLUE}📦 Current version: ${CURRENT_VERSION}${NC}"
 
 # Update version
