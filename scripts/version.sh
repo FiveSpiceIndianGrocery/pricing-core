@@ -160,8 +160,8 @@ if [ "$AUTO_COMMIT" = true ]; then
     echo -e "${GREEN}✅ Version ${NEW_VERSION} committed successfully${NC}"
     
     # Create git tag
-    echo -e "${BLUE}🏷️ Creating git tag v${NEW_VERSION}...${NC}"
-    git tag -a "v${NEW_VERSION}" -m "Release version ${NEW_VERSION}"
+    echo -e "${BLUE}🏷️ Creating git tag ${NEW_VERSION}...${NC}"
+    git tag -a "${NEW_VERSION}" -m "Release version ${NEW_VERSION}"
     
     echo -e "${GREEN}✅ Git tag v${NEW_VERSION} created${NC}"
     
