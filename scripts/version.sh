@@ -181,144 +181,103 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [${NEW_VERSION}] - $(date +%Y-%m-%d)
 
 ### Added
-- Automated version management
-- Enhanced security policies
-- GitHub Actions privacy controls
+- Initial release features
 
 ### Changed
-- Repository renamed to pricing-core
-- Package branding updated to PricingCore
+- Initial release
 
 ### Fixed
-- Security vulnerability reporting process
-- GitHub Actions permissions
-
-## [1.0.0] - 2025-08-17
-
-### Added
-- High-precision pricing engine with BigInt
-- 180+ currency support via ISO 4217
-- Multiple rounding strategies
-- CLI testing environment
-- Comprehensive examples
-- TypeScript support
+- Initial release
 EOF
 else
-    # Create appropriate changelog entry based on version type
+    # Prompt user for changelog content based on version type
+    echo -e "${BLUE}📝 Creating changelog entry for ${NEW_VERSION}...${NC}"
+    
     if [ "$VERSION_TYPE" = "major" ]; then
-        # Major version changelog template
+        echo -e "${PURPLE}⚠️  MAJOR VERSION - Breaking Changes Required${NC}"
+        echo "Please provide details for the breaking changes:"
+        read -p "Breaking changes description: " BREAKING_CHANGES
+        
+        echo -e "${BLUE}📝 Please provide new features added:${NC}"
+        read -p "New features (comma separated): " NEW_FEATURES
+        
+        echo -e "${BLUE}📝 Please provide changes made:${NC}"
+        read -p "Changes made (comma separated): " CHANGES_MADE
+        
+        echo -e "${BLUE}📝 Please provide bug fixes:${NC}"
+        read -p "Bug fixes (comma separated): " BUG_FIXES
+        
+        # Create major version changelog
         MAJOR_CHANGELOG="## [Unreleased]
 
 ## [${NEW_VERSION}] - $(date +%Y-%m-%d)
 
 ### ⚠️ BREAKING CHANGES
-- **calculatePrice() function signature changed** - Added strategy parameter for markup strategies
-  - Old: \`calculatePrice(cost, margin, rounding)\`
-  - New: \`calculatePrice(cost, markup, strategy, rounding)\`
-  - Default strategy is 'margin' for backward compatibility
-  - Use \`calculatePriceWithMargin()\` for legacy behavior
+${BREAKING_CHANGES}
 
 ### Added
-- **Multiple markup strategies** for different business models:
-  - \`margin\`: Margin on selling price (original behavior)
-  - \`costPlus\`: Fixed percentage added to cost
-  - \`keystone\`: Traditional retail markup (double cost)
-  - \`keystonePlus\`: Keystone plus additional percentage
-  - \`fixedAmount\`: Fixed amount added to cost
-  - \`targetMargin\`: Target margin on cost
-  - \`markupOnCost\`: Percentage markup on cost
-- **Convenience functions** for each strategy:
-  - \`calculateCostPlusPrice()\`
-  - \`calculateKeystonePrice()\`
-  - \`calculateKeystonePlusPrice()\`
-  - \`calculateFixedAmountPrice()\`
-  - \`calculateMarkupOnCostPrice()\`
-- **Business use case examples** for different industries
-- **Strategy selection guide** for choosing the right markup approach
+${NEW_FEATURES}
 
 ### Changed
-- Enhanced \`calculatePrice()\` function to support multiple markup strategies
-- Updated examples to demonstrate all new markup strategies
-- Enhanced CLI to work with new function signatures
-- Improved documentation with strategy selection guide
-
-### Deprecated
-- \`calculatePrice(cost, margin, rounding)\` - Use \`calculatePrice(cost, margin, 'margin', rounding)\` instead
-- Legacy function \`calculatePriceWithMargin()\` provided for backward compatibility
-
-### Migration Guide
-For existing users, update your code as follows:
-
-\`\`\`javascript
-// Old way (still works but deprecated)
-const price = calculatePrice(cost, margin, 'charm99');
-
-// New way (recommended)
-const price = calculatePrice(cost, margin, 'margin', 'charm99');
-
-// Or use convenience function
-const price = calculatePriceWithMargin(cost, margin, 'charm99');
-
-// New strategies
-const costPlusPrice = calculatePrice(cost, markup, 'costPlus', 'ceilStepUSD');
-const keystonePrice = calculatePrice(cost, 0, 'keystone', 'identity');
-\`\`\`
-
-## [1.0.15] - 2024-12-19
-
-### Added
-- Automated version management
-- Enhanced security policies
-- GitHub Actions privacy controls
-
-### Changed
-- Repository renamed to pricing-core
-- Package branding updated to PricingCore
+${CHANGES_MADE}
 
 ### Fixed
-- Security vulnerability reporting process
-- GitHub Actions permissions"
-        
-        # Insert major version changelog
-        echo "${MAJOR_CHANGELOG}" > CHANGELOG.md.tmp
-        sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
-        mv CHANGELOG.md.tmp CHANGELOG.md
+${BUG_FIXES}"
         
     elif [ "$VERSION_TYPE" = "minor" ]; then
-        # Minor version changelog template
+        echo -e "${BLUE}📝 Please provide new features added:${NC}"
+        read -p "New features (comma separated): " NEW_FEATURES
+        
+        echo -e "${BLUE}📝 Please provide changes made:${NC}"
+        read -p "Changes made (comma separated): " CHANGES_MADE
+        
+        echo -e "${BLUE}📝 Please provide bug fixes:${NC}"
+        read -p "Bug fixes (comma separated): " BUG_FIXES
+        
+        # Create minor version changelog
         MINOR_CHANGELOG="## [Unreleased]
 
 ## [${NEW_VERSION}] - $(date +%Y-%m-%d)
 
 ### Added
-- New features and enhancements
-- Additional functionality
+${NEW_FEATURES}
 
 ### Changed
-- Improvements to existing features
-- Performance optimizations
+${CHANGES_MADE}
 
 ### Fixed
-- Bug fixes and improvements"
-        
-        # Insert minor version changelog
-        echo "${MINOR_CHANGELOG}" > CHANGELOG.md.tmp
-        sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
-        mv CHANGELOG.md.tmp CHANGELOG.md
+${BUG_FIXES}"
         
     else
-        # Patch version changelog template
+        # Patch version
+        echo -e "${BLUE}📝 Please provide bug fixes:${NC}"
+        read -p "Bug fixes (comma separated): " BUG_FIXES
+        
+        echo -e "${BLUE}📝 Please provide changes made:${NC}"
+        read -p "Changes made (comma separated): " CHANGES_MADE
+        
+        # Create patch version changelog
         PATCH_CHANGELOG="## [Unreleased]
 
 ## [${NEW_VERSION}] - $(date +%Y-%m-%d)
 
 ### Fixed
-- Bug fixes and improvements
+${BUG_FIXES}
 
 ### Changed
-- Minor improvements and updates"
-        
-        # Insert patch version changelog
+${CHANGES_MADE}"
+    fi
+    
+    # Insert the appropriate changelog
+    if [ "$VERSION_TYPE" = "major" ]; then
+        echo "${MAJOR_CHANGELOG}" > CHANGELOG.md.tmp
+        sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
+        mv CHANGELOG.md.tmp CHANGELOG.md
+    elif [ "$VERSION_TYPE" = "minor" ]; then
+        echo "${MINOR_CHANGELOG}" > CHANGELOG.md.tmp
+        sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
+        mv CHANGELOG.md.tmp CHANGELOG.md
+    else
         echo "${PATCH_CHANGELOG}" > CHANGELOG.md.tmp
         sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
         mv CHANGELOG.md.tmp CHANGELOG.md
