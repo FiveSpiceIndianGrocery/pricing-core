@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [v3.0.2] - 2025-08-17
+
+### Fixed
+No Fixes
+
+### Changed
+No Changes
+
 ## [v3.0.1] - 2025-08-17
 
 ### Fixed
