@@ -140,7 +140,7 @@ async function singleCalculation() {
   
   Object.entries(rounders).forEach(([key, rounder]) => {
     try {
-      const price = calculatePrice(costUnits, marginBps, key);
+      const price = calculatePrice(costUnits, marginBps, 'margin', key);
       const formattedPrice = formatPrice(price, currency, true);
       console.log(`${key.padEnd(15)}: ${formattedPrice}`);
     } catch (error) {
@@ -155,7 +155,7 @@ async function singleCalculation() {
       const target = units - last + 9n;
       return target >= units ? target : target + 10n;
     };
-    const price = calculatePrice(costUnits, marginBps, customRounder);
+    const price = calculatePrice(costUnits, marginBps, 'margin', customRounder);
     const formattedPrice = formatPrice(price, currency, true);
     console.log(`custom         : ${formattedPrice} (last digit 9)`);
   } catch (error) {
@@ -184,8 +184,8 @@ async function batchTest() {
     const costUnits = toSmallestUnit(scenario.cost, scenario.currency);
     
     try {
-      const identityPrice = calculatePrice(costUnits, marginBps, "identity");
-      const charmPrice = calculatePrice(costUnits, marginBps, "charm99");
+      const identityPrice = calculatePrice(costUnits, marginBps, "margin", "identity");
+      const charmPrice = calculatePrice(costUnits, marginBps, "margin", "charm99");
       
       console.log(`  Identity: ${formatPrice(identityPrice, scenario.currency, true)}`);
       console.log(`  Charm99:  ${formatPrice(charmPrice, scenario.currency, true)}`);
@@ -215,7 +215,7 @@ async function customRounding() {
     console.log(`\nTesting with cost: ${formatPrice(testCost, testCurrency)}, margin: 30%`);
     
     const costUnits = toSmallestUnit(testCost, testCurrency);
-    const price = calculatePrice(costUnits, testMargin, customRounder);
+    const price = calculatePrice(costUnits, testMargin, 'margin', customRounder);
     console.log(`Result: ${formatPrice(price, testCurrency, true)}`);
     
     // Test the function directly
@@ -388,7 +388,7 @@ async function customCurrency() {
     console.log(`\nTesting with amount: ${testAmount} ${customCurrency.code}`);
     console.log(`Amount in smallest units: ${testUnits.toString()}`);
     
-    const price = calculatePrice(testUnits, testMargin, 'identity');
+    const price = calculatePrice(testUnits, testMargin, 'margin', 'identity');
     console.log(`Price with 20% margin: ${formatPrice(price, customCurrency, true)}`);
     
   } catch (error) {

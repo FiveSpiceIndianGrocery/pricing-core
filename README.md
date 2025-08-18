@@ -11,8 +11,6 @@ A high-precision, **currency-agnostic** pricing engine built in Node.js using Bi
 ```bash
 # Install
 npm install pricing-core
-# Install specific version
-npm install pricing-core@v1.0.12
 
 # Import and use
 import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-core';
@@ -61,7 +59,7 @@ import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-c
 // Calculate price for a $2.50 item with 30% margin
 const cost = toSmallestUnit(2.50, 'USD');  // Convert to cents
 const margin = pctToBps(30);                // 30% → 3000 bps
-const price = calculatePrice(cost, margin, 'ceilStepUSD'); // Round to nickels
+const price = calculatePrice(cost, margin, 'margin', 'ceilStepUSD'); // Round to nickels
 
 console.log(formatPrice(price, 'USD', true)); // "$3.60"
 ```
@@ -70,23 +68,40 @@ console.log(formatPrice(price, 'USD', true)); // "$3.60"
 
 ### Main Functions
 
-#### `calculatePrice(costUnits, marginBps, rounding)`
+#### `calculatePrice(costUnits, markupValue, strategy, rounding)`
 
-Calculate the selling price based on cost and desired margin.
+Calculate the selling price based on cost and markup strategy.
 
 **Parameters:**
 - `costUnits` (BigInt | number): Cost in smallest currency units (e.g., cents)
-- `marginBps` (BigInt | number): Margin in basis points (e.g., 3000 for 30%)
+- `markupValue` (BigInt | number): Markup amount based on strategy
+- `strategy` (string): Markup strategy to use (default: 'margin')
 - `rounding` (string | function): Rounding strategy or custom function
 
 **Returns:** BigInt - Price in smallest currency units
 
-**Example:**
+**Supported Strategies:**
+- **`margin`**: Margin on selling price (price = cost / (1 - margin))
+- **`costPlus`**: Fixed percentage added to cost (price = cost * (1 + markup))
+- **`keystone`**: Double the cost (price = cost * 2)
+- **`keystonePlus`**: Keystone plus additional percentage (price = cost * 2 * (1 + markup))
+- **`fixedAmount`**: Fixed amount added to cost (price = cost + markup)
+- **`targetMargin`**: Target margin on cost (price = cost / (1 - margin))
+- **`markupOnCost`**: Percentage markup on cost (price = cost * (1 + markup))
+
+**Examples:**
 ```javascript
+// Margin strategy (original behavior)
 const cost = toSmallestUnit(10.99, 'USD');  // 1099 cents
 const margin = pctToBps(35);                // 35% margin
-const price = calculatePrice(cost, margin, 'charm99');
-// Returns price in cents with .99 ending
+const price = calculatePrice(cost, margin, 'margin', 'charm99');
+
+// Cost-plus strategy
+const markup = pctToBps(25);                // 25% markup
+const costPlusPrice = calculatePrice(cost, markup, 'costPlus', 'ceilStepUSD');
+
+// Keystone strategy
+const keystonePrice = calculatePrice(cost, 0, 'keystone', 'identity');
 ```
 
 #### `pctToBps(percentage)`
@@ -97,6 +112,73 @@ Convert percentage to basis points.
 - `percentage` (number): Percentage value (e.g., 30 for 30%)
 
 **Returns:** number - Basis points (e.g., 3000 for 30%)
+
+### Convenience Functions
+
+#### `calculatePriceWithMargin(costUnits, marginBps, rounding)`
+
+Legacy function for backward compatibility - uses margin strategy.
+
+**Parameters:**
+- `costUnits` (BigInt | number): Cost in smallest currency units
+- `marginBps` (BigInt | number): Margin in basis points
+- `rounding` (string | function): Rounding strategy
+
+**Returns:** BigInt - Price in smallest currency units
+
+#### `calculateCostPlusPrice(costUnits, markupBps, rounding)`
+
+Calculate price using cost-plus markup strategy.
+
+**Parameters:**
+- `costUnits` (BigInt | number): Cost in smallest currency units
+- `markupBps` (BigInt | number): Markup in basis points (e.g., 2500 for 25%)
+- `rounding` (string | function): Rounding strategy
+
+**Returns:** BigInt - Price in smallest currency units
+
+#### `calculateKeystonePrice(costUnits, rounding)`
+
+Calculate price using keystone markup (double the cost).
+
+**Parameters:**
+- `costUnits` (BigInt | number): Cost in smallest currency units
+- `rounding` (string | function): Rounding strategy
+
+**Returns:** BigInt - Price in smallest currency units
+
+#### `calculateKeystonePlusPrice(costUnits, additionalMarkupBps, rounding)`
+
+Calculate price using keystone plus additional markup.
+
+**Parameters:**
+- `costUnits` (BigInt | number): Cost in smallest currency units
+- `additionalMarkupBps` (BigInt | number): Additional markup in basis points
+- `rounding` (string | function): Rounding strategy
+
+**Returns:** BigInt - Price in smallest currency units
+
+#### `calculateFixedAmountPrice(costUnits, fixedAmount, rounding)`
+
+Calculate price by adding a fixed amount to cost.
+
+**Parameters:**
+- `costUnits` (BigInt | number): Cost in smallest currency units
+- `fixedAmount` (BigInt | number): Fixed amount to add in smallest currency units
+- `rounding` (string | function): Rounding strategy
+
+**Returns:** BigInt - Price in smallest currency units
+
+#### `calculateMarkupOnCostPrice(costUnits, markupBps, rounding)`
+
+Calculate price using markup on cost percentage.
+
+**Parameters:**
+- `costUnits` (BigInt | number): Cost in smallest currency units
+- `markupBps` (BigInt | number): Markup percentage in basis points
+- `rounding` (string | function): Rounding strategy
+
+**Returns:** BigInt - Price in smallest currency units
 
 ### Currency Utilities
 
@@ -298,6 +380,51 @@ This package leverages the [currency-codes](https://www.npmjs.com/package/curren
 - **Rich Metadata**: Includes country information, ISO numbers, and currency names
 - **Maintenance**: No need to manually maintain currency data
 
+## 🎯 Markup Strategies
+
+The pricing engine supports multiple markup strategies to fit different business models and pricing philosophies:
+
+### Available Strategies
+
+- **`margin`**: Margin on selling price (price = cost / (1 - margin))
+  - Best for: Maintaining consistent profit margins
+  - Example: 30% margin means 30% of the selling price is profit
+  
+- **`costPlus`**: Fixed percentage added to cost (price = cost * (1 + markup))
+  - Best for: Simple, predictable markup
+  - Example: 25% markup means add 25% to the cost
+  
+- **`keystone`**: Double the cost (price = cost * 2)
+  - Best for: Traditional retail markup
+  - Example: $10 cost → $20 price
+  
+- **`keystonePlus`**: Keystone plus additional percentage (price = cost * 2 * (1 + markup))
+  - Best for: Premium retail with additional markup
+  - Example: $10 cost → $20 keystone → $25 with 25% additional markup
+  
+- **`fixedAmount`**: Fixed amount added to cost (price = cost + markup)
+  - Best for: Low-cost items or minimum pricing
+  - Example: $5 cost + $2 markup = $7 price
+  
+- **`targetMargin`**: Target margin on cost (price = cost / (1 - margin))
+  - Best for: Cost-based margin calculations
+  - Example: 40% margin on cost means 40% of cost is profit
+  
+- **`markupOnCost`**: Percentage markup on cost (price = cost * (1 + markup))
+  - Best for: Cost-based percentage markup
+  - Example: 50% markup on cost means add 50% to cost
+
+### Strategy Selection Guide
+
+| Business Type | Recommended Strategy | Reasoning |
+|---------------|---------------------|-----------|
+| **E-commerce** | `margin` | Consistent profit margins across products |
+| **Retail** | `keystone` or `keystonePlus` | Traditional retail markup |
+| **Restaurants** | `costPlus` | Simple food cost markup |
+| **Services** | `fixedAmount` | Predictable service fees |
+| **Luxury Goods** | `keystonePlus` | Premium positioning with additional markup |
+| **Wholesale** | `markupOnCost` | Cost-based pricing for B2B |
+
 ## 🎯 Rounding Strategies
 
 ### Built-in Strategies
@@ -342,7 +469,7 @@ import { calculatePrice, pctToBps, toSmallestUnit, formatPrice } from 'pricing-c
 
 const cost = toSmallestUnit(2.50, 'USD');  // $2.50 → 250 cents
 const margin = pctToBps(30);                // 30% → 3000 bps
-const price = calculatePrice(cost, margin, 'ceilStepUSD');
+const price = calculatePrice(cost, margin, 'margin', 'ceilStepUSD');
 
 console.log(formatPrice(price, 'USD', true)); // "$3.60"
 ```
@@ -359,10 +486,32 @@ const products = [
 products.forEach(product => {
   const costUnits = toSmallestUnit(product.cost, product.currency);
   const marginBps = pctToBps(product.margin);
-  const price = calculatePrice(costUnits, marginBps, 'identity');
+  const price = calculatePrice(costUnits, marginBps, 'margin', 'identity');
   
   console.log(`${product.name}: ${formatPrice(price, product.currency, true)}`);
 });
+```
+
+### Example 3: Different Markup Strategies
+
+```javascript
+const cost = toSmallestUnit(20.00, 'USD');  // $20.00 cost
+
+// 1. Margin strategy (30% margin on selling price)
+const marginPrice = calculatePrice(cost, pctToBps(30), 'margin', 'ceilStepUSD');
+console.log(`Margin pricing: ${formatPrice(marginPrice, 'USD', true)}`);
+
+// 2. Cost-plus strategy (25% markup on cost)
+const costPlusPrice = calculatePrice(cost, pctToBps(25), 'costPlus', 'ceilStepUSD');
+console.log(`Cost-plus pricing: ${formatPrice(costPlusPrice, 'USD', true)}`);
+
+// 3. Keystone strategy (double the cost)
+const keystonePrice = calculatePrice(cost, 0, 'keystone', 'ceilStepUSD');
+console.log(`Keystone pricing: ${formatPrice(keystonePrice, 'USD', true)}`);
+
+// 4. Fixed amount markup ($5.00)
+const fixedPrice = calculatePrice(cost, toSmallestUnit(5.00, 'USD'), 'fixedAmount', 'ceilStepUSD');
+console.log(`Fixed amount pricing: ${formatPrice(fixedPrice, 'USD', true)}`);
 ```
 
 ### Example 3: Custom Currency (Crypto)
@@ -372,7 +521,7 @@ const btc = createCurrency('BTC', '₿', 8);  // Bitcoin with 8 decimal places
 const btcCost = toSmallestUnit(0.001, btc);  // 0.001 BTC → 100000 satoshis
 const btcMargin = pctToBps(15);               // 15% margin
 
-const btcPrice = calculatePrice(btcCost, btcMargin, 'identity');
+const btcPrice = calculatePrice(btcCost, btcMargin, 'margin', 'identity');
 console.log(formatPrice(btcPrice, btc, true)); // "₿0.00115000"
 ```
 
@@ -388,68 +537,15 @@ npm run examples     # Run pricing examples
 npm run cli          # Interactive testing environment
 ```
 
-### **🚀 Automated Versioning & Releases**
-```bash
-# Quick releases (automated)
-npm run release:patch    # 1.0.0 → 1.0.1 (bug fixes)
-npm run release:minor    # 1.0.0 → 1.1.0 (new features)
-npm run release:major    # 1.0.0 → 2.0.0 (breaking changes)
-
-# Manual version control
-npm run version:patch    # Update version only
-npm run version:minor    # Update version only
-npm run version:major    # Update version only
-npm run version:dry-run  # Preview version changes
-```
-
-### **Development Workflow**
-```bash
-# Install dependencies
-npm install
-
-# Run development mode (tests + examples)
-npm run dev
-
-# Test your changes
-npm test
-
-# Try interactive CLI
-npm start
-
-# Publish new version
-npm run publish:patch  # 1.0.0 → 1.0.1
-npm run publish:minor  # 1.0.0 → 1.1.0
-npm run publish:major  # 1.0.0 → 2.0.0
-```
-
 ### **ES Modules Support**
 This package is built with ES modules and is fully compatible with modern Node.js. All functions include JSDoc comments for excellent IDE support.
 
-## 📦 Publishing
-
-This package is published to the public npm registry (npmjs.com). To publish a new version:
-
-1. **Update version** in `package.json`
-2. **Create a GitHub release** with the new version tag
-3. **GitHub Actions** will automatically publish to `pricing-core` on npm
-
-### Manual Publishing
-
-```bash
-# Login to npm
-npm login
-
-# Publish the package
-npm publish
-```
 
 ### Installing from npm
 
 ```bash
 # Install the package directly from npm
 npm install pricing-core
-# Install specific version
-npm install pricing-core@v1.0.12
 ```
 
 ## 🔧 Advanced Usage
@@ -477,7 +573,7 @@ const items = [
 const results = items.map(item => {
   const costUnits = toSmallestUnit(item.cost, item.currency);
   const marginBps = pctToBps(item.margin);
-  const price = calculatePrice(costUnits, marginBps, 'identity');
+  const price = calculatePrice(costUnits, marginBps, 'margin', 'identity');
   
   return {
     ...item,
@@ -536,7 +632,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 **Please do NOT report security vulnerabilities through public GitHub issues.**
 
-If you discover a security vulnerability, please email [security@fivespiceindiangrocery.com](mailto:security@fivespiceindiangrocery.com).
+If you discover a security vulnerability, please email [security@fivespiceindiangrocery.com](mailto:kunal@fivespiceindiangrocery.com).
 
 See [SECURITY.md](SECURITY.md) for more details.
 

@@ -1,4 +1,12 @@
-export { calculatePrice } from "./core/calculator.js";
+export { 
+  calculatePrice, 
+  calculatePriceWithMargin,
+  calculateCostPlusPrice,
+  calculateKeystonePrice,
+  calculateKeystonePlusPrice,
+  calculateFixedAmountPrice,
+  calculateMarkupOnCostPrice
+} from "./core/calculator.js";
 export { rounders, resolveRounder, createCurrencyStepRounder } from "./rounding/index.js";
 export * from "./currency.js";
 

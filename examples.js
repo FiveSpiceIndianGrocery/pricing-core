@@ -1,200 +1,285 @@
 #!/usr/bin/env node
 
 /**
- * Comprehensive examples for the Pricing Engine
- * Demonstrates currency-agnostic pricing calculations with currency-codes package integration
+ * Comprehensive examples demonstrating all markup strategies
+ * Run with: npm run examples
  */
 
 import { 
   calculatePrice, 
+  calculatePriceWithMargin,
+  calculateCostPlusPrice,
+  calculateKeystonePrice,
+  calculateKeystonePlusPrice,
+  calculateFixedAmountPrice,
+  calculateMarkupOnCostPrice,
   pctToBps, 
-  rounders, 
-  createCurrencyStepRounder,
-  toSmallestUnit,
-  fromSmallestUnit,
+  toSmallestUnit, 
   formatPrice,
-  CURRENCIES,
-  createCurrency,
-  getCurrenciesByDecimalPlaces,
-  getCurrenciesByRegion,
-  getCurrencyByNumber,
-  getCurrenciesByCountry,
-  getISOPublishDate,
-  getCurrencyDetails
+  createCurrency
 } from './src/index.js';
 
-console.log('🚀 Pricing Engine Examples - Powered by currency-codes Package\n');
+console.log('🚀 PricingCore - Advanced Markup Strategies Examples\n');
 
-// Example 1: Basic USD pricing
-console.log('=== Example 1: Basic USD Pricing ===');
-const usdCost = toSmallestUnit(2.50, 'USD');  // $2.50 → 250 cents
-const usdMargin = pctToBps(30);                // 30% → 3000 bps
+// Example 1: Different Markup Strategies Comparison
+console.log('📊 MARKUP STRATEGIES COMPARISON');
+console.log('================================');
 
-const usdPrice = calculatePrice(usdCost, usdMargin, 'ceilStepUSD');
-console.log(`Cost: ${formatPrice(2.50, 'USD')}`);
-console.log(`Margin: 30%`);
-console.log(`Price (rounded to nickels): ${formatPrice(usdPrice, 'USD', true)}`);
-console.log();
+const cost = toSmallestUnit(10.00, 'USD');  // $10.00 cost
+const margin30 = pctToBps(30);               // 30% margin
+const markup25 = pctToBps(25);               // 25% markup
 
-// Example 2: EUR pricing with different rounding
-console.log('=== Example 2: EUR Pricing ===');
-const eurCost = toSmallestUnit(5.75, 'EUR');  // €5.75 → 575 centimes
-const eurMargin = pctToBps(25);                // 25% → 2500 bps
+console.log(`Base Cost: ${formatPrice(cost, 'USD', true)}`);
+console.log('');
 
-const eurPriceIdentity = calculatePrice(eurCost, eurMargin, 'identity');
-const eurPriceCharm = calculatePrice(eurCost, eurMargin, 'charm99');
+// 1. Margin on selling price (original strategy)
+const marginPrice = calculatePrice(cost, margin30, 'margin', 'ceilStepUSD');
+console.log(`1. Margin Strategy (30% margin on selling price):`);
+console.log(`   Formula: price = cost / (1 - 0.30) = $10.00 / 0.70`);
+console.log(`   Price: ${formatPrice(marginPrice, 'USD', true)}`);
+console.log(`   Margin: ${formatPrice(marginPrice - cost, 'USD', true)}`);
+console.log(`   Margin %: ${((Number(marginPrice - cost) / Number(marginPrice)) * 100).toFixed(1)}%`);
+console.log('');
 
-console.log(`Cost: ${formatPrice(5.75, 'EUR')}`);
-console.log(`Margin: 25%`);
-console.log(`Price (no rounding): ${formatPrice(eurPriceIdentity, 'EUR', true)}`);
-console.log(`Price (.99 ending): ${formatPrice(eurPriceCharm, 'EUR', true)}`);
-console.log();
+// 2. Cost-plus markup
+const costPlusPrice = calculatePrice(cost, markup25, 'costPlus', 'ceilStepUSD');
+console.log(`2. Cost-Plus Strategy (25% markup on cost):`);
+console.log(`   Formula: price = cost * (1 + 0.25) = $10.00 * 1.25`);
+console.log(`   Price: ${formatPrice(costPlusPrice, 'USD', true)}`);
+console.log(`   Markup: ${formatPrice(costPlusPrice - cost, 'USD', true)}`);
+console.log(`   Markup %: ${((Number(costPlusPrice - cost) / Number(cost)) * 100).toFixed(1)}%`);
+console.log('');
 
-// Example 3: JPY pricing (no decimals)
-console.log('=== Example 3: JPY Pricing (No Decimals) ===');
-const jpyCost = toSmallestUnit(1000, 'JPY');  // ¥1000 → 1000 yen
-const jpyMargin = pctToBps(40);                // 40% → 4000 bps
+// 3. Keystone markup (double the cost)
+const keystonePrice = calculatePrice(cost, 0, 'keystone', 'ceilStepUSD');
+console.log(`3. Keystone Strategy (double the cost):`);
+console.log(`   Formula: price = cost * 2 = $10.00 * 2`);
+console.log(`   Price: ${formatPrice(keystonePrice, 'USD', true)}`);
+console.log(`   Markup: ${formatPrice(keystonePrice - cost, 'USD', true)}`);
+console.log(`   Markup %: ${((Number(keystonePrice - cost) / Number(cost)) * 100).toFixed(1)}%`);
+console.log('');
 
-const jpyPrice = calculatePrice(jpyCost, jpyMargin, 'ceilStepJPY');
+// 4. Keystone plus additional markup
+const keystonePlusPrice = calculatePrice(cost, markup25, 'keystonePlus', 'ceilStepUSD');
+console.log(`4. Keystone Plus Strategy (double + 25%):`);
+console.log(`   Formula: price = cost * 2 * (1 + 0.25) = $10.00 * 2 * 1.25`);
+console.log(`   Price: ${formatPrice(keystonePlusPrice, 'USD', true)}`);
+console.log(`   Markup: ${formatPrice(keystonePlusPrice - cost, 'USD', true)}`);
+console.log(`   Markup %: ${((Number(keystonePlusPrice - cost) / Number(cost)) * 100).toFixed(1)}%`);
+console.log('');
 
-console.log(`Cost: ${formatPrice(1000, 'JPY')}`);
-console.log(`Margin: 40%`);
-console.log(`Price (rounded to yen): ${formatPrice(jpyPrice, 'JPY', true)}`);
-console.log();
+// 5. Fixed amount markup
+const fixedAmount = toSmallestUnit(5.00, 'USD');  // $5.00 fixed markup
+const fixedAmountPrice = calculatePrice(cost, fixedAmount, 'fixedAmount', 'ceilStepUSD');
+console.log(`5. Fixed Amount Strategy ($5.00 markup):`);
+console.log(`   Formula: price = cost + $5.00 = $10.00 + $5.00`);
+console.log(`   Price: ${formatPrice(fixedAmountPrice, 'USD', true)}`);
+console.log(`   Markup: ${formatPrice(fixedAmountPrice - cost, 'USD', true)}`);
+console.log(`   Markup %: ${((Number(fixedAmountPrice - cost) / Number(cost)) * 100).toFixed(1)}%`);
+console.log('');
 
-// Example 4: Custom currency (crypto)
-console.log('=== Example 4: Custom Currency (Crypto) ===');
-const btc = createCurrency('BTC', '₿', 8);  // Bitcoin with 8 decimal places
-const btcCost = toSmallestUnit(0.001, btc);  // 0.001 BTC → 100000 satoshis
-const btcMargin = pctToBps(15);               // 15% → 1500 bps
+// 6. Markup on cost (same as cost-plus, different perspective)
+const markupOnCostPrice = calculatePrice(cost, markup25, 'markupOnCost', 'ceilStepUSD');
+console.log(`6. Markup on Cost Strategy (25% markup on cost):`);
+console.log(`   Formula: price = cost * (1 + 0.25) = $10.00 * 1.25`);
+console.log(`   Price: ${formatPrice(markupOnCostPrice, 'USD', true)}`);
+console.log(`   Markup: ${formatPrice(markupOnCostPrice - cost, 'USD', true)}`);
+console.log(`   Markup %: ${((Number(markupOnCostPrice - cost) / Number(cost)) * 100).toFixed(1)}%`);
+console.log('');
 
-const btcPrice = calculatePrice(btcCost, btcMargin, 'identity');
-
-console.log(`Cost: ${formatPrice(0.001, btc)}`);
-console.log(`Margin: 15%`);
-console.log(`Price: ${formatPrice(btcPrice, btc, true)}`);
-console.log();
-
-// Example 5: Batch pricing with different currencies
-console.log('=== Example 5: Batch Pricing ===');
-const products = [
-  { name: 'Widget A', cost: 10.99, currency: 'USD', margin: 35 },
-  { name: 'Widget B', cost: 15.50, currency: 'EUR', margin: 30 },
-  { name: 'Widget C', cost: 2000, currency: 'JPY', margin: 25 },
-  { name: 'Widget D', cost: 500, currency: 'INR', margin: 40 },
-  { name: 'Widget E', cost: 25.75, currency: 'GBP', margin: 45 },
-  { name: 'Widget F', cost: 150, currency: 'CNY', margin: 20 }
+console.log('📈 STRATEGY COMPARISON SUMMARY');
+console.log('===============================');
+const strategies = [
+  { name: 'Margin (30%)', price: marginPrice, formula: 'cost / (1 - 0.30)' },
+  { name: 'Cost-Plus (25%)', price: costPlusPrice, formula: 'cost * (1 + 0.25)' },
+  { name: 'Keystone', price: keystonePrice, formula: 'cost * 2' },
+  { name: 'Keystone+ (25%)', price: keystonePlusPrice, formula: 'cost * 2 * (1 + 0.25)' },
+  { name: 'Fixed Amount ($5)', price: fixedAmountPrice, formula: 'cost + $5.00' },
+  { name: 'Markup on Cost (25%)', price: markupOnCostPrice, formula: 'cost * (1 + 0.25)' }
 ];
 
-console.log('Product Pricing Summary:');
-console.log('-'.repeat(70));
-console.log('Product'.padEnd(12) + 'Cost'.padEnd(20) + 'Margin'.padEnd(8) + 'Price');
-console.log('-'.repeat(70));
+strategies.forEach((strategy, index) => {
+  const markup = Number(strategy.price - cost);
+  const markupPercent = (markup / Number(cost)) * 100;
+  const marginPercent = (markup / Number(strategy.price)) * 100;
+  
+  console.log(`${index + 1}. ${strategy.name}:`);
+  console.log(`   Price: ${formatPrice(strategy.price, 'USD', true)}`);
+  console.log(`   Markup: ${formatPrice(markup, 'USD', true)} (${markupPercent.toFixed(1)}% on cost)`);
+  console.log(`   Margin: ${marginPercent.toFixed(1)}% on selling price`);
+  console.log(`   Formula: ${strategy.formula}`);
+  console.log('');
+});
+
+// Example 2: Multi-Currency Markup Examples
+console.log('🌍 MULTI-CURRENCY MARKUP EXAMPLES');
+console.log('==================================');
+
+const products = [
+  { name: 'Premium Coffee', cost: 8.99, currency: 'USD', margin: 40, strategy: 'margin' },
+  { name: 'Artisan Bread', cost: 6.50, currency: 'EUR', markup: 35, strategy: 'costPlus' },
+  { name: 'Sushi Set', cost: 2500, currency: 'JPY', strategy: 'keystone' },
+  { name: 'Designer Bag', cost: 150.00, currency: 'GBP', markup: 50, strategy: 'keystonePlus' },
+  { name: 'Street Food', cost: 45.00, currency: 'INR', fixedAmount: 15.00, strategy: 'fixedAmount' }
+];
 
 products.forEach(product => {
-  const costUnits = toSmallestUnit(product.cost, product.currency);
-  const marginBps = pctToBps(product.margin);
-  const price = calculatePrice(costUnits, marginBps, 'identity');
+  let price;
+  let description;
   
-  console.log(
-    product.name.padEnd(12) +
-    formatPrice(product.cost, product.currency).padEnd(20) +
-    `${product.margin}%`.padEnd(8) +
-    formatPrice(price, product.currency, true)
+  switch (product.strategy) {
+    case 'margin':
+      price = calculatePrice(
+        toSmallestUnit(product.cost, product.currency), 
+        pctToBps(product.margin), 
+        'margin'
+      );
+      description = `${product.margin}% margin on selling price`;
+      break;
+      
+    case 'costPlus':
+      price = calculatePrice(
+        toSmallestUnit(product.cost, product.currency), 
+        pctToBps(product.markup), 
+        'costPlus'
+      );
+      description = `${product.markup}% markup on cost`;
+      break;
+      
+    case 'keystone':
+      price = calculatePrice(
+        toSmallestUnit(product.cost, product.currency), 
+        0, 
+        'keystone'
+      );
+      description = 'keystone pricing (double cost)';
+      break;
+      
+    case 'keystonePlus':
+      price = calculatePrice(
+        toSmallestUnit(product.cost, product.currency), 
+        pctToBps(product.markup), 
+        'keystonePlus'
+      );
+      description = `keystone plus ${product.markup}% markup`;
+      break;
+      
+    case 'fixedAmount':
+      price = calculatePrice(
+        toSmallestUnit(product.cost, product.currency), 
+        toSmallestUnit(product.fixedAmount, product.currency), 
+        'fixedAmount'
+      );
+      description = `fixed ${formatPrice(toSmallestUnit(product.fixedAmount, product.currency), product.currency, true)} markup`;
+      break;
+  }
+  
+  console.log(`${product.name} (${product.currency}):`);
+  console.log(`  Cost: ${formatPrice(toSmallestUnit(product.cost, product.currency), product.currency, true)}`);
+  console.log(`  Strategy: ${description}`);
+  console.log(`  Price: ${formatPrice(price, product.currency, true)}`);
+  console.log('');
+});
+
+// Example 3: Business Use Cases
+console.log('💼 BUSINESS USE CASES');
+console.log('=====================');
+
+// Retail clothing store
+console.log('👕 RETAIL CLOTHING STORE');
+const tshirtCost = toSmallestUnit(15.00, 'USD');
+const tshirtPrice = calculatePrice(tshirtCost, pctToBps(60), 'margin', 'charm99');
+console.log(`T-shirt cost: ${formatPrice(tshirtCost, 'USD', true)}`);
+console.log(`T-shirt price (60% margin + .99 ending): ${formatPrice(tshirtPrice, 'USD', true)}`);
+console.log('');
+
+// Restaurant pricing
+console.log('🍽️ RESTAURANT PRICING');
+const pastaCost = toSmallestUnit(4.50, 'USD');
+const pastaPrice = calculatePrice(pastaCost, pctToBps(300), 'costPlus', 'ceilStepUSD');
+console.log(`Pasta cost: ${formatPrice(pastaCost, 'USD', true)}`);
+console.log(`Pasta price (300% markup on cost): ${formatPrice(pastaPrice, 'USD', true)}`);
+console.log('');
+
+// Electronics store
+console.log('📱 ELECTRONICS STORE');
+const phoneCost = toSmallestUnit(400.00, 'USD');
+const phonePrice = calculatePrice(phoneCost, 0, 'keystone', 'identity');
+console.log(`Phone cost: ${formatPrice(phoneCost, 'USD', true)}`);
+console.log(`Phone price (keystone): ${formatPrice(phonePrice, 'USD', true)}`);
+console.log('');
+
+// Luxury goods
+console.log('💎 LUXURY GOODS');
+const watchCost = toSmallestUnit(2000.00, 'USD');
+const watchPrice = calculatePrice(watchCost, pctToBps(100), 'keystonePlus', 'identity');
+console.log(`Watch cost: ${formatPrice(watchCost, 'USD', true)}`);
+console.log(`Watch price (keystone + 100% markup): ${formatPrice(watchPrice, 'USD', true)}`);
+console.log('');
+
+// Example 4: Advanced Scenarios
+console.log('🔬 ADVANCED SCENARIOS');
+console.log('======================');
+
+// Dynamic pricing based on cost ranges
+console.log('📊 DYNAMIC PRICING BY COST RANGE');
+const costRanges = [
+  { min: 0, max: 10, strategy: 'margin', value: 50 },      // 50% margin for low-cost items
+  { min: 10, max: 50, strategy: 'margin', value: 40 },     // 40% margin for medium-cost items
+  { min: 50, max: 200, strategy: 'margin', value: 35 },    // 35% margin for high-cost items
+  { min: 200, max: Infinity, strategy: 'keystone', value: 0 } // keystone for luxury items
+];
+
+const testCosts = [5.00, 25.00, 100.00, 500.00];
+testCosts.forEach(cost => {
+  const range = costRanges.find(r => cost >= r.min && cost < r.max);
+  const price = calculatePrice(
+    toSmallestUnit(cost, 'USD'), 
+    pctToBps(range.value), 
+    range.strategy, 
+    'ceilStepUSD'
   );
-});
-console.log();
-
-// Example 6: Custom rounding strategies
-console.log('=== Example 6: Custom Rounding ===');
-const customCost = toSmallestUnit(7.25, 'USD');
-const customMargin = pctToBps(20);
-
-// Custom rounder: round to nearest quarter (25¢)
-const roundToQuarter = (units) => {
-  const quarter = 25n;
-  const remainder = units % quarter;
-  if (remainder === 0n) return units;
   
-  const halfQuarter = quarter / 2n;
-  if (remainder >= halfQuarter) {
-    return units + (quarter - remainder);
-  } else {
-    return units - remainder;
-  }
-};
-
-const customPrice = calculatePrice(customCost, customMargin, roundToQuarter);
-console.log(`Cost: ${formatPrice(7.25, 'USD')}`);
-console.log(`Margin: 20%`);
-console.log(`Price (rounded to quarters): ${formatPrice(customPrice, 'USD', true)}`);
-console.log();
-
-// Example 7: Currency analysis and statistics
-console.log('=== Example 7: Currency Analysis ===');
-console.log(`📊 Total supported currencies: ${Object.keys(CURRENCIES).length}`);
-console.log(`📅 ISO 4217 data publish date: ${getISOPublishDate()}`);
-
-const decimalPlacesStats = {};
-Object.values(CURRENCIES).forEach(config => {
-  const places = config.decimalPlaces;
-  decimalPlacesStats[places] = (decimalPlacesStats[places] || 0) + 1;
+  console.log(`Cost: $${cost.toFixed(2)} → Strategy: ${range.strategy} (${range.value}%) → Price: ${formatPrice(price, 'USD', true)}`);
 });
+console.log('');
 
-console.log('\n🔢 Currencies by decimal places:');
-Object.entries(decimalPlacesStats).forEach(([places, count]) => {
-  console.log(`  ${places} decimal places: ${count} currencies`);
+// Seasonal pricing adjustments
+console.log('🌤️ SEASONAL PRICING ADJUSTMENTS');
+const baseCost = toSmallestUnit(20.00, 'USD');
+const seasonalMarkups = [
+  { season: 'Off-Season', markup: 20, strategy: 'costPlus' },
+  { season: 'Regular', markup: 35, strategy: 'costPlus' },
+  { season: 'Peak', markup: 60, strategy: 'costPlus' }
+];
+
+seasonalMarkups.forEach(season => {
+  const price = calculatePrice(baseCost, pctToBps(season.markup), season.strategy, 'ceilStepUSD');
+  console.log(`${season.season}: ${formatPrice(price, 'USD', true)} (${season.markup}% markup)`);
 });
+console.log('');
 
-console.log('\nCurrencies with 0 decimal places (like JPY, KRW):');
-const zeroDecimalCurrencies = getCurrenciesByDecimalPlaces(0);
-console.log(`  ${zeroDecimalCurrencies.slice(0, 10).join(', ')}${zeroDecimalCurrencies.length > 10 ? '...' : ''}`);
+// Example 5: Function-Specific Examples
+console.log('🔧 FUNCTION-SPECIFIC EXAMPLES');
+console.log('==============================');
 
-console.log('\nCurrencies with 3 decimal places (like BHD, KWD):');
-const threeDecimalCurrencies = getCurrenciesByDecimalPlaces(3);
-console.log(`  ${threeDecimalCurrencies.join(', ')}`);
+const baseCostExample = toSmallestUnit(25.00, 'USD');
 
-// Example 8: Regional currency examples
-console.log('\n=== Example 8: Regional Currency Examples ===');
-const regions = getCurrenciesByRegion();
-Object.entries(regions).forEach(([region, currencies]) => {
-  if (currencies.length > 0) {
-    const sampleCurrency = currencies[0];
-    const sampleCost = toSmallestUnit(100, sampleCurrency);
-    const sampleMargin = pctToBps(25);
-    const samplePrice = calculatePrice(sampleCost, sampleMargin, 'identity');
-    
-    console.log(`${region}: ${sampleCurrency} - ${formatPrice(100, sampleCurrency)} → ${formatPrice(samplePrice, sampleCurrency, true)} (25% margin)`);
-  }
-});
+console.log('Using individual functions:');
+console.log(`Base cost: ${formatPrice(baseCostExample, 'USD', true)}`);
+console.log(`Margin pricing (30%): ${formatPrice(calculatePriceWithMargin(baseCostExample, pctToBps(30)), 'USD', true)}`);
+console.log(`Cost-plus (40%): ${formatPrice(calculateCostPlusPrice(baseCostExample, pctToBps(40)), 'USD', true)}`);
+console.log(`Keystone: ${formatPrice(calculateKeystonePrice(baseCostExample), 'USD', true)}`);
+console.log(`Keystone+ (25%): ${formatPrice(calculateKeystonePlusPrice(baseCostExample, pctToBps(25)), 'USD', true)}`);
+console.log(`Fixed amount ($10): ${formatPrice(calculateFixedAmountPrice(baseCostExample, toSmallestUnit(10.00, 'USD')), 'USD', true)}`);
+console.log(`Markup on cost (50%): ${formatPrice(calculateMarkupOnCostPrice(baseCostExample, pctToBps(50)), 'USD', true)}`);
+console.log('');
 
-// Example 9: New currency-codes integration features
-console.log('\n=== Example 9: Currency-Codes Integration ===');
-
-// Get currency by ISO number
-const usdByNumber = getCurrencyByNumber(840);
-console.log(`Currency with ISO number 840: ${usdByNumber ? usdByNumber.code : 'Not found'}`);
-
-// Get currencies by country
-const colombiaCurrencies = getCurrenciesByCountry('colombia');
-console.log(`Currencies used in Colombia: ${colombiaCurrencies.map(c => c.code).join(', ')}`);
-
-// Get detailed currency information
-const eurDetails = getCurrencyDetails('EUR');
-if (eurDetails) {
-  console.log(`EUR details: ${eurDetails.currency} used in ${eurDetails.countries.length} countries`);
-  console.log(`  Countries: ${eurDetails.countries.slice(0, 5).join(', ')}${eurDetails.countries.length > 5 ? '...' : ''}`);
-}
-
-// Example 10: Available rounding strategies
-console.log('\n=== Example 10: Available Rounding Strategies ===');
-console.log('Built-in rounding strategies:');
-Object.keys(rounders).forEach(strategy => {
-  console.log(`  - ${strategy}`);
-});
-
-console.log('\n✅ Examples completed!');
-console.log('\nTo run the interactive CLI: npm run cli');
-console.log('To run automated tests: npm test');
-console.log(`\n🌍 This pricing engine now supports ${Object.keys(CURRENCIES).length} currencies via the currency-codes package!`);
-console.log(`📦 Powered by: https://www.npmjs.com/package/currency-codes`);
+console.log('✅ All examples completed successfully!');
+console.log('\n💡 Key Takeaways:');
+console.log('• Margin strategy: Best for maintaining consistent profit margins');
+console.log('• Cost-plus: Simple and predictable markup');
+console.log('• Keystone: Traditional retail markup (2x cost)');
+console.log('• Fixed amount: Good for low-cost items or minimum pricing');
+console.log('• All strategies support the same rounding options');
+console.log('• Use the strategy that best fits your business model and pricing goals');
