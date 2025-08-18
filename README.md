@@ -10,6 +10,8 @@ A high-precision, **currency-agnostic** pricing engine built in Node.js using Bi
 
 ```bash
 npm install pricing-core
+# Install specific version
+npm install pricing-core@3.0.1
 ```
 
 ```javascript
