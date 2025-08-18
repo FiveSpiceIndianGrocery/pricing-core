@@ -376,15 +376,6 @@ function safeCalculatePrice(cost, margin, strategy, rounding) {
 
 ## 📦 **Package Integration**
 
-### **As a Dependency**
-
-```json
-{
-  "dependencies": {
-    "pricing-core": "^2.0.0"
-  }
-}
-```
 
 ### **Bundle Integration**
 
