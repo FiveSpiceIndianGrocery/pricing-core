@@ -280,8 +280,9 @@ const keystonePrice = calculatePrice(cost, 0, 'keystone', 'identity');
 - GitHub Actions permissions"
         
         # Insert major version changelog
-        sed -i.bak "s/## \[Unreleased\]/${MAJOR_CHANGELOG}/" CHANGELOG.md
-        rm CHANGELOG.md.bak
+        echo "${MAJOR_CHANGELOG}" > CHANGELOG.md.tmp
+        sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
+        mv CHANGELOG.md.tmp CHANGELOG.md
         
     elif [ "$VERSION_TYPE" = "minor" ]; then
         # Minor version changelog template
@@ -301,8 +302,9 @@ const keystonePrice = calculatePrice(cost, 0, 'keystone', 'identity');
 - Bug fixes and improvements"
         
         # Insert minor version changelog
-        sed -i.bak "s/## \[Unreleased\]/${MINOR_CHANGELOG}/" CHANGELOG.md
-        rm CHANGELOG.md.bak
+        echo "${MINOR_CHANGELOG}" > CHANGELOG.md.tmp
+        sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
+        mv CHANGELOG.md.tmp CHANGELOG.md
         
     else
         # Patch version changelog template
@@ -317,8 +319,9 @@ const keystonePrice = calculatePrice(cost, 0, 'keystone', 'identity');
 - Minor improvements and updates"
         
         # Insert patch version changelog
-        sed -i.bak "s/## \[Unreleased\]/${PATCH_CHANGELOG}/" CHANGELOG.md
-        rm CHANGELOG.md.bak
+        echo "${PATCH_CHANGELOG}" > CHANGELOG.md.tmp
+        sed -n '2,$p' CHANGELOG.md >> CHANGELOG.md.tmp
+        mv CHANGELOG.md.tmp CHANGELOG.md
     fi
 fi
 
