@@ -1,4 +1,18 @@
-# Changelog
+## [Unreleased]
+
+## [v3.0.0] - 2025-08-17
+
+### ⚠️ BREAKING CHANGES
+Breaks from the main down
+
+### Added
+Change,Change,change
+
+### Changed
+Change,Change,Change
+
+### Fixed
+
 
 All notable changes to PricingCore will be documented in this file.
 
